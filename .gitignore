@@ -1,0 +1,20 @@
+/target
+
+# Eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# IDEA
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# Other
+eclipse
+run
