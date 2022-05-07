@@ -43,7 +43,7 @@ impl fmt::Display for PosIntError {
 
 impl From<ParseIntError> for PosIntError {
 
-    /// Converts a `ParseIntError` from the standard library to the more general `PosIntError`.
+    /// Converts a [`ParseIntError`] from the standard library to the more general [`PosIntError`].
     ///
     /// # Arguments
     ///
@@ -62,8 +62,8 @@ impl From<ParseIntError> for PosIntError {
 ///
 /// # Errors
 ///
-/// The function returns a `PosIntError::ParseError` if the integer cannot be
-/// parsed into an unsigned 32-bit integer or a `PosIntError::ZeroError` if the
+/// The function returns a [`PosIntError::ParseError`] if the integer cannot be
+/// parsed into an unsigned 32-bit integer or a [`PosIntError::ZeroError`] if the
 /// integer is zero.
 fn parse_positive_int(str: &str) -> Result<u32, PosIntError> {
     let result = u32::from_str(str)?;
