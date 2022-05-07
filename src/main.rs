@@ -1,6 +1,78 @@
+use std::error::Error;
+use std::fmt;
+use std::num::ParseIntError;
 use std::ops::Deref;
+use std::str::FromStr;
 use clap::Parser;
 use image::{GenericImage, GenericImageView, ImageBuffer};
+use crate::PosIntError::{ParseError, ZeroError};
+
+/// Represents errors converting a string to a positive (non-zero, non-negative) integer
+#[derive(Debug)]
+enum PosIntError {
+
+    /// Error parsing a string to a non-negative integer
+    ParseError(ParseIntError),
+
+    /// The integer is zero.
+    ZeroError
+
+}
+
+impl Error for PosIntError {}
+
+impl fmt::Display for PosIntError {
+
+    /// Formats this error as a string.
+    ///
+    /// # Arguments
+    ///
+    /// * `f` - formatter
+    ///
+    /// # Errors
+    ///
+    /// Returns a formatting error if this error could not be written to the formatter.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ParseError(err) => write!(f, "{}", err),
+            ZeroError => write!(f, "Integer cannot be zero")
+        }
+    }
+
+}
+
+impl From<ParseIntError> for PosIntError {
+
+    /// Converts a `ParseIntError` from the standard library to the more general `PosIntError`.
+    ///
+    /// # Arguments
+    ///
+    /// * `err` - error to convert
+    fn from(err: ParseIntError) -> Self {
+        ParseError(err)
+    }
+
+}
+
+/// Parses a string as a positive (non-negative, non-zero) 32-bit integer.
+///
+/// # Arguments
+///
+/// * `str` - string to parse as a positive integer
+///
+/// # Errors
+///
+/// The function returns a `PosIntError::ParseError` if the integer cannot be
+/// parsed into an unsigned 32-bit integer or a `PosIntError::ZeroError` if the
+/// integer is zero.
+fn parse_positive_int(str: &str) -> Result<u32, PosIntError> {
+    let result = u32::from_str(str)?;
+
+    match result == 0 {
+        true => Err(ZeroError),
+        false => Ok(result)
+    }
+}
 
 /// Contains program arguments parsed from the command line
 #[derive(Parser)]
@@ -12,15 +84,15 @@ struct FrameRev {
     input: std::path::PathBuf,
 
     /// Width of a frame in the image
-    #[clap(short = 'w', long = "width")]
+    #[clap(parse(try_from_str = parse_positive_int), short = 'w', long = "width")]
     frame_width: u32,
 
     /// Height of a frame in the image
-    #[clap(short = 'h', long = "height")]
+    #[clap(parse(try_from_str = parse_positive_int), short = 'h', long = "height")]
     frame_height: u32,
 
     /// Number of frames per row in the destination image
-    #[clap(short = 'r', long = "frames-per-row")]
+    #[clap(parse(try_from_str = parse_positive_int), short = 'r', long = "frames-per-row")]
     frames_per_row: Option<u32>,
 
     /// Path to location whose contents will be overwritten with output
@@ -29,10 +101,31 @@ struct FrameRev {
 
 }
 
+/// Divides two unsigned integers, always rounding up if there is a fractional remainder.
+///
+/// # Arguments
+///
+/// * `dividend` - number to divide
+/// * `divisor` - number to divide the dividend by
+fn div_ceil(dividend: u32, divisor: u32) -> u32 {
+    dividend / divisor + ((dividend % divisor != 0) as u32)
+}
+
+/// Runs the CLI.
+///
+/// # Panics
+///
+/// Panics if the provided command-line arguments are invalid (see [`FrameRev`]), if
+/// the frame width or frame height are larger than the image dimensions, if the
+/// input location cannot be read from, or if the output location cannot be written to.
 fn main() {
     let args = FrameRev::parse();
+
     let source = image::open(args.input)
         .expect("Image not found");
+    if args.frame_width > source.width() || args.frame_height > source.height() {
+        panic!("Frames cannot be larger than source image");
+    }
 
     // Determine source image dimensions
     let src_frames_x = source.width() / args.frame_width;
@@ -80,14 +173,4 @@ fn main() {
     }
 
     dest.save(args.output).expect("Unable to save image");
-}
-
-/// Divides two unsigned integers, always rounding up if there is a fractional remainder.
-///
-/// # Arguments
-///
-/// * `dividend` - number to divide
-/// * `divisor` - number to divide the dividend by
-fn div_ceil(dividend: u32, divisor: u32) -> u32 {
-    dividend / divisor + ((dividend % divisor != 0) as u32)
 }
