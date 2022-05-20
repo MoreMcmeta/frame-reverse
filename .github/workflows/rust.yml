@@ -67,7 +67,7 @@ jobs:
           args: --release --target=${{ matrix.target }}
 
       - name: Zip release items
-        run: zip ${{ matrix.target }}.zip README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
+        run: zip -j ${{ matrix.target }}.zip README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
 
       - name: Create Release
         id: create_release
