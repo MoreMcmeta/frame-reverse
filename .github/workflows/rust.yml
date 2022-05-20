@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: "Set Archive Name Variable"
         run: |
-          echo "ARCHIVE_NAME=\"${{ env.PROJ_NAME }} (${{ matrix.description }}).zip\""
+          echo 'ARCHIVE_NAME="${{ env.PROJ_NAME }} (${{ matrix.description }}).zip"'
 
       - name: Checkout
         uses: actions/checkout@v3
