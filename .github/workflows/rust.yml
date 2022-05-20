@@ -67,7 +67,11 @@ jobs:
           args: --release --target=${{ matrix.target }}
 
       - name: Zip release items
-        run: zip -j ${{ matrix.target }}.zip README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
+        uses: papeloto/action-zip@v1
+        with:
+          files: README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
+          recursive: false
+          dest: ${{ matrix.target }}.zip 
 
       - name: Create Release
         id: create_release
