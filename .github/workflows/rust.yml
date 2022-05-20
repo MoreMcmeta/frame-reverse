@@ -12,9 +12,11 @@ on:
       draft:
         type: boolean
         description: Draft?
+        required: true
       prerelease:
         type: boolean
         description: Prerelease?
+        required: true
 
 env:
   PROJ_NAME: frame-reverse
@@ -22,6 +24,9 @@ env:
 jobs:
   build:
     name: Build
+    environment: release
+    permissions:
+      contents: write
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
