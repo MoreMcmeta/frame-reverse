@@ -29,10 +29,10 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      upload_url: steps.create_release.outputs.upload_url
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
       
     steps:
-      - name: Create Release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -45,7 +45,7 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
 
   build:
-    name: Build and Upload
+    name: Build and upload
     environment: release
     needs: create_release
     permissions:
@@ -102,7 +102,7 @@ jobs:
           recursive: true
           dest: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
 
-      - name: Upload Build
+      - name: Upload build
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
