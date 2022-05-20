@@ -22,9 +22,32 @@ env:
   PROJ_NAME: frame-reverse
 
 jobs:
-  build:
-    name: Build
+  create_release:
+    name: Create release
     environment: release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: steps.create_release.outputs.upload_url
+      
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          release_name: Release ${{ github.event.inputs.version }} (${{ matrix.description }})
+          body: ${{ github.event.inputs.changelog }}
+          draft: ${{ github.event.inputs.draft }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+
+  build:
+    name: Build and Upload
+    environment: release
+    needs: create_release
     permissions:
       contents: write
     runs-on: ${{ matrix.os }}
@@ -79,24 +102,12 @@ jobs:
           recursive: true
           dest: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.event.inputs.version }}
-          release_name: Release ${{ github.event.inputs.version }} (${{ matrix.description }})
-          body: ${{ github.event.inputs.changelog }}
-          draft: ${{ github.event.inputs.draft }}
-          prerelease: ${{ github.event.inputs.prerelease }}
-
       - name: Upload Build
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          upload_url: ${{ needs.create_release.outputs.upload_url }} 
           asset_path: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
           asset_name: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
           asset_content_type: application/zip
