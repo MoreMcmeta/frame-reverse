@@ -76,7 +76,7 @@ jobs:
         uses: papeloto/action-zip@v1
         with:
           files: README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
-          recursive: false
+          recursive: true
           dest: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
 
       - name: Create Release
