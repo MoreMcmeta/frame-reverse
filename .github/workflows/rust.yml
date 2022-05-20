@@ -55,9 +55,11 @@ jobs:
             target: x86_64-apple-darwin
             extension: ""
             description: 64-bit macOS
-    env:
-      archive_name: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
     steps:
+      - name: "Set Archive Name Variable"
+        env:
+          ARCHIVE_NAME: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
+
       - name: Checkout
         uses: actions/checkout@v3
       - name: Toolchain
@@ -79,7 +81,7 @@ jobs:
         with:
           files: README.md target/${{ matrix.target }}/release/${{ env.PROJ_NAME }}${{ matrix.extension }}
           recursive: false
-          dest: ${{ env.archive_name }}
+          dest: ${{ env.ARCHIVE_NAME }}
 
       - name: Create Release
         id: create_release
