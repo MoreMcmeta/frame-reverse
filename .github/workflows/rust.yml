@@ -57,10 +57,8 @@ jobs:
             description: 64-bit macOS
     steps:
       - name: "Set Archive Name Variable"
-        env:
-          ARCHIVE_NAME: ${{ env.PROJ_NAME }} (${{ matrix.description }}).zip
         run: |
-          echo "Set archive name to ${{env.ARCHIVE_NAME}}"
+          echo "ARCHIVE_NAME=\"${{ env.PROJ_NAME }} (${{ matrix.description }}).zip\""
 
       - name: Checkout
         uses: actions/checkout@v3
