@@ -224,10 +224,11 @@ dependencies = [
 
 [[package]]
 name = "frame-reverse"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "clap",
  "image",
+ "static_vcruntime",
 ]
 
 [[package]]
@@ -594,6 +595,12 @@ checksum = "c530c2b0d0bf8b69304b39fe2001993e267461948b890cd037d8ad4293fa1a0d"
 dependencies = [
  "lock_api",
 ]
+
+[[package]]
+name = "static_vcruntime"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "954e3e877803def9dc46075bf4060147c55cd70db97873077232eae0269dc89b"
 
 [[package]]
 name = "strsim"

@@ -2,7 +2,7 @@
 name = "frame-reverse"
 description = "CLI to reverse frames in a texture for a MoreMcmeta animation."
 authors = ["soir20"]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,3 +10,6 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.1.15", features = ["derive"] }
 image = "0.24.2"
+
+[build-dependencies]
+static_vcruntime = "2.0.0"
