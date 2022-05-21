@@ -67,11 +67,11 @@ jobs:
             extension: ""
             description: 64-bit Linux
           - os: windows-latest
-            target: i686-pc-windows-msvc
+            target: i686-pc-windows-gnu
             extension: .exe
             description: 32-bit Windows
           - os: windows-latest
-            target: x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-gnu
             extension: .exe
             description: 64-bit Windows
           - os: macos-latest
